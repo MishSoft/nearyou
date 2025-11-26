@@ -76,7 +76,6 @@ export default function Post() {
           <div className="max-h-[400px] overflow-y-scroll scroll-hide">
             <Comment />
             <Comment />
-            <Comment />
           </div>
           <div className="my-2 flex items-center border rounded-xl  border-gray-100">
             <input
