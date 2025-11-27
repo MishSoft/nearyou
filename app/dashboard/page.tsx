@@ -1,7 +1,8 @@
-import React from "react";
+"use client";
+
 import Post from "./components/Post";
 
-export default function page() {
+export default function Page() {
   return (
     <div className="w-full max-h-screen flex flex-col items-center  justify-start">
       <div className="w-full fixed p-5 flex items-center justify-center bg-white ">
