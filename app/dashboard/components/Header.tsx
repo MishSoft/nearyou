@@ -1,5 +1,5 @@
 "use client";
-import { House, Heart, Search, Plus, Group, Pin, Settings } from "lucide-react";
+import { House, Heart, Search, Plus, User, Pin, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDashboard } from "../context/DashboardContext";
@@ -9,7 +9,7 @@ const links = [
   { href: "/dashboard/search", icon: Search },
   { href: "", dataType: "create", icon: Plus }, // create -- handled as button
   { href: "/dashboard/notifications", icon: Heart },
-  { href: "/dashboard/friends", icon: Group },
+  { href: "/dashboard/profile", icon: User },
 ];
 
 export default function Header() {
