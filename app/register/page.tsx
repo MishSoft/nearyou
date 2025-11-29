@@ -1,6 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Session } from '@supabase/supabase-js';
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabaseClient"
+import signUpUser from "@/auth/signUpUser";
+import { LoaderCircle } from "lucide-react";
 
 const locations = [
   {
@@ -138,18 +143,60 @@ const locations = [
   },
 ];
 
+
 export default function RegisterPage() {
+  const router = useRouter()
+  const [name, setname] = useState('')
+  const [lastname, setLastname] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassowrd] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
+  const [loading, setLoading] = useState(true)
+  const [message, setMessage] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        router.push('/dashboard')
+
+      } else {
+        setLoading(false)
+      }
+    })
+  }, [router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // აქ დაიწყებ Supabase insert user
-    console.log({ city, district });
-  };
 
+    const result = await signUpUser(name, lastname, email, password, city, district)
+    const { data, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single()
+
+
+    if (error) {
+      console.log(error.message)
+    }
+
+    console.log(data?.id)
+
+    if (result?.error) {
+      console.log(result.error)
+    } else {
+      setMessage("Signup successful")
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 2000)
+    }
+
+  };
+  // if (loading) return null
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-pink-50 via-white to-blue-50 px-4">
+    <div className="min-h-screen flex items-center justify-center  from-pink-50 via-white to-blue-50 px-4">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg flex flex-col gap-6"
@@ -157,7 +204,13 @@ export default function RegisterPage() {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Create Account
         </h1>
-
+        {
+          message && (
+            <p className="text-center text-red-400 font-semibold">
+              {message}
+            </p>
+          )
+        }
         {/* Name + Surname */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input
@@ -165,12 +218,16 @@ export default function RegisterPage() {
             placeholder="First Name"
             className="p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
             required
+            value={name}
+            onChange={(e) => setname(e.target.value)}
           />
           <input
             type="text"
             placeholder="Last Name"
             className="p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
             required
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
           />
         </div>
 
@@ -180,6 +237,8 @@ export default function RegisterPage() {
           placeholder="Email"
           className="p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
           required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         {/* Password + Confirm */}
@@ -189,12 +248,16 @@ export default function RegisterPage() {
             placeholder="Password"
             className="p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
             required
+            value={password}
+            onChange={(e) => setPassowrd(e.target.value)}
           />
           <input
             type="password"
             placeholder="Confirm Password"
             className="p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
             required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
 
@@ -242,9 +305,12 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className="mt-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl font-semibold shadow-md hover:from-pink-600 hover:to-pink-700 transition"
+          className="mt-4 bg-green-400 text-white py-3 rounded-xl font-semibold shadow-md hover:from-pink-600 hover:to-pink-700 transition"
         >
-          Register
+          {loading ?
+            <LoaderCircle size={25} className="animate-spin" />
+            : "Register"}
+
         </button>
 
         <p className="text-center text-gray-500 mt-2">
@@ -257,3 +323,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+

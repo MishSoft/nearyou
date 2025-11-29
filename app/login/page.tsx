@@ -39,9 +39,9 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <button className="bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-semibold transition">
+        <Link href={'/register'} className="bg-green-500 text-center hover:bg-green-600 text-white py-3 rounded-xl font-semibold transition">
           Create New Account
-        </button>
+        </Link>
       </form>
     </div>
   );
