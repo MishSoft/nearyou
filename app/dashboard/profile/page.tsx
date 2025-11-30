@@ -1,11 +1,23 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client";
-import React, { useState } from "react";
+
 import UserInfo from "../components/UserInfo";
 import Post from "../components/Post";
 import { useDashboard } from "../context/DashboardContext";
+import { useDataProvider } from "@/context/ServerContext";
+import { LoaderCircle } from "lucide-react";
 
 export default function Page() {
   const { setCreatePop } = useDashboard();
+  const { userData, loading } = useDataProvider()
+
+  console.log(userData)
+
+  if (loading) return <div className="w-full h-screen absolute z-9999 top-0 leading-0 flex items-center justify-center">
+    <LoaderCircle size={25} className="animate-spin" />
+  </div>
+
   return (
     <div className="w-full max-h-screen flex flex-col items-center  justify-start">
       {/* Header */}
@@ -20,11 +32,19 @@ export default function Page() {
           onClick={() => setCreatePop(true)}
           className="pb-5 border-gray-200 flex items-center gap-2 text-gray-400 cursor-pointer  border-b w-full text-left my-2"
         >
-          <img
-            className="w-12 h-12 rounded-full object-cover"
-            src="https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?cs=srgb&dl=pexels-italo-melo-881954-2379005.jpg&fm=jpg"
-            alt=""
-          />
+          {
+            userData.avatar_url ? (<img
+              className="w-12 h-12 rounded-full object-cover"
+              src={userData.avatar_url}
+              alt=""
+            />) : (
+                <img
+                  className="w-12 h-12 rounded-full object-cover"
+                  src='/user-default.jpg'
+                  alt=""
+                />
+            )
+          }
           What&apos;s new
         </div>
         <div>

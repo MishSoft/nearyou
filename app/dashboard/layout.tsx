@@ -3,12 +3,15 @@ import React from "react";
 import Header from "./components/Header";
 import { DashboardProvider, useDashboard } from "./context/DashboardContext";
 import Create from "./components/Create";
+import { ServerProvider } from "@/context/ServerContext";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <DashboardProvider>
-      <Content>{children}</Content>
-    </DashboardProvider>
+    <ServerProvider>
+      <DashboardProvider>
+        <Content>{children}</Content>
+      </DashboardProvider>
+    </ServerProvider>
   );
 }
 

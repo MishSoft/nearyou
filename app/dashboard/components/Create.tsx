@@ -4,6 +4,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Image, Smile, MapPin } from "lucide-react";
 import { useDashboard } from "../context/DashboardContext";
+import { useDataProvider } from "@/context/ServerContext";
 
 export default function Create() {
   const popRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,7 @@ export default function Create() {
   const [postMessage, setPostMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string[] | null>(null);
+  const { userData, loading } = useDataProvider()
 
   // Outside click handler
   useEffect(() => {
@@ -81,14 +83,25 @@ export default function Create() {
 
           {/* User Info */}
           <div className="flex items-start gap-3 p-4">
-            <img
-              src="https://img.freepik.com/free-photo/portrait-young-handsome-man-posing_23-2148884314.jpg?semt=ais_hybrid&w=740&q=80"
-              alt="profile"
-              className="w-12 h-12 rounded-full object-cover"
-            />
+            {
+              userData.avatar_url ? (
+                <img
+                  src={userData.avatar_url}
+                  alt="profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              ) : (
+                <img
+                  src="/user-default.jpg"
+                  alt="profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              )
+            }
             <div className="flex flex-col justify-center">
-              <h3 className="font-semibold text-gray-900">Mishiko Aspanidze</h3>
-              <span className="text-gray-500 text-sm">@mishiko</span>
+              <h3 className="font-semibold text-gray-900">
+                {loading ? "Loading..." : userData.first_name + userData.last_name}
+              </h3>
             </div>
           </div>
 

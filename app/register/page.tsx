@@ -170,29 +170,31 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = await signUpUser(name, lastname, email, password, city, district)
-    const { data, error } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', email)
-      .single()
+    setLoading(true);
+    setMessage("");
 
+    try {
+      const result = await signUpUser(name, lastname, email, password, city, district);
 
-    if (error) {
-      console.log(error.message)
-    }
+      if (result?.error) {
+        // თუ signUpUser-ში მოხდა შეცდომა
+        setMessage(result.error);
+        console.log("Sign up error:", result.error);
+        setLoading(false);
+        return;
+      }
 
-    console.log(data?.id)
-
-    if (result?.error) {
-      console.log(result.error)
-    } else {
-      setMessage("Signup successful")
+      // წარმატების შეტყობინება
+      setMessage("Signup successful!");
       setTimeout(() => {
-        router.push('/dashboard')
-      }, 2000)
+        router.push("/dashboard");
+      }, 2000);
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setMessage("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
-
   };
   // if (loading) return null
   return (
